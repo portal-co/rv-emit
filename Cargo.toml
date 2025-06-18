@@ -1,0 +1,10 @@
+[package]
+name = "portal-solutions-rv-emit"
+version = "0.1.0"
+edition = "2024"
+license = "MPL-2.0"
+description = "Our utilities for emitting Riscv"
+
+[dependencies]
+itertools = { version = "0.14.0", default-features = false, features = ["use_alloc"] }
+rv-asm = "0.2.1"
