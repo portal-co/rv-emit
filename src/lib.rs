@@ -1,6 +1,8 @@
 #![no_std]
 extern crate alloc;
+use bitvec::{bits, slice::BitSlice};
 use itertools::Itertools;
+use portal_pc_asm_common::types::{InputRef, InputStream, Perms};
 use rv_asm::{Imm, Inst, Reg};
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
 #[repr(u8)]
@@ -103,4 +105,41 @@ pub fn split<V: IntoIterator<Item = (Inst, Nj)>>(
                 .flat_map(move |(a, b)| fj(rb(root + (a as u64), fj(b.into_iter()))))),
         ))
     });
+}
+pub fn inject<E: portal_pc_asm_common::IOError>(
+    i: &mut (dyn InputStream<Error = E> + '_),
+    xlen: rv_asm::Xlen,
+    r: bool,
+    x: impl Iterator<Item = (Inst, Nj)>,
+) -> Result<(), E> {
+    use bitvec::prelude::Lsb0;
+    for (a, b) in x {
+        let a = a.encode_normal(xlen);
+        let mut a = a.to_le_bytes().map(|a| (a, Nj::Nonjumpable));
+        a[0].1 = b;
+        for (a, b) in a {
+            let c = if r { bits!(1) } else { bits!(0) };
+            let d = match b {
+                Nj::Jumpable => bits!(0),
+                Nj::Nonjumpable => bits!(1),
+            };
+            i.write_all(
+                InputRef::new(
+                    &[a],
+                    Perms {
+                        w: bitvec::bits!(0),
+                        r: {
+                            c
+                        },
+                        x: bits!(1),
+                        nj: {
+                            d
+                        },
+                    },
+                )
+                .unwrap(),
+            )?;
+        }
+    }
+    Ok(())
 }

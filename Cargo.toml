@@ -8,3 +8,5 @@ description = "Our utilities for emitting Riscv"
 [dependencies]
 itertools = { version = "0.14.0", default-features = false, features = ["use_alloc"] }
 rv-asm = "0.2.1"
+portal-pc-asm-common = { version = "0.1.0", features = ["alloc"] }
+bitvec = { version = "1.0.1", default-features = false }
