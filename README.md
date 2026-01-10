@@ -1,13 +1,14 @@
-# rv-emit
+# portal-solutions-rv-emit
 
 ## Description
-Project rv-emit
+Utilities for emitting RISC-V instructions (`rv-emit`). Uses `rv-asm` and `portal-pc-asm-common`.
 
 ## Goals
-- [ ] Add project goals
+- [ ] Generate RISC-V machine code
+- [ ] Support instruction encoding
 
 ## Progress
-- [ ] Initial setup
+- [ ] Crate initialized
 
 ---
 *AI assisted*
